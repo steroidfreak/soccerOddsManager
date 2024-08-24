@@ -123,8 +123,8 @@ function calculateOutcomeProbabilities(data, homeTeam, awayTeam) {
 
     }
     // let result = calculateProbability(eplData,"Liverpool","Arsenal","0","0");
-    let result = calculateOutcomeProbabilities(eplData,"Liverpool","Arsenal");
-    console.log(result.probabilities.HomeWin);
+    let result = calculateOutcomeProbabilities(eplData,data.response[0].teams.home.name,data.response[0].teams.away.name);
+    console.log(result.probabilities.HomeWin, result.probabilities.Draw,result.probabilities.AwayWin);
     // console.log(data.response[0].goals.home, "vs" ,data.response[0].goals.away);
     if(data.response[0].fixture.status.short == "NS"){
       output.innerHTML = `
@@ -142,6 +142,7 @@ function calculateOutcomeProbabilities(data, homeTeam, awayTeam) {
       <h2><img src="${data.response[0].teams.home.logo}" style="width: 100%; height: auto; max-width: 50px;">${data.response[0].teams.home.name}  ${data.response[0].goals.home}  
         Vs
         <img src="${data.response[0].teams.away.logo}" style="width: 100%; height: auto; max-width: 50px;">${data.response[0].teams.away.name}  ${data.response[0].goals.away}</h2>
+        <h2>HomeWin:${result.probabilities.HomeWin},  Draw:${result.probabilities.Draw},  AwayWin:${result.probabilities.AwayWin}
         
     `
 
@@ -169,7 +170,9 @@ function calculateOutcomeProbabilities(data, homeTeam, awayTeam) {
         <h2><img src="${data.response[0].teams.home.logo}" style="width: 100%; height: auto; max-width: 50px;">${data.response[0].teams.home.name}  ${data.response[0].goals.home}  
           Vs
           <img src="${data.response[0].teams.away.logo}" style="width: 100%; height: auto; max-width: 50px;">${data.response[0].teams.away.name}  ${data.response[0].goals.away}</h2>
+        <h2>HomeWin:${result.probabilities.HomeWin},  Draw:${result.probabilities.Draw},  AwayWin:${result.probabilities.AwayWin}
           
+
       `
   
       }
