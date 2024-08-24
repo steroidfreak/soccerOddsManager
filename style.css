@@ -1,3 +1,7 @@
 #soccer {
     /* text-align: center; */
   }
+
+.smaller-font {
+  font-size: 0.8em; /* Adjust the value to your liking */
+}  
