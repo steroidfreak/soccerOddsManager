@@ -15,8 +15,8 @@ var requestOptions = {
 
 // console.log(data.response[0].league.id);
 
-async function search() {
-  const response = await axios.get("https://v3.football.api-sports.io/fixtures?league=39&season=2024&from=2024-08-23&to=2024-08-30", {
+async function search(day0,day7) {
+  const response = await axios.get(`https://v3.football.api-sports.io/fixtures?league=39&season=2024&from=${day0}&to=${day7}`, {
       
       headers: {"x-apisports-key": "95782220272b5bde20c7d5b97070ec44"},
   })
@@ -24,20 +24,59 @@ async function search() {
   return response.data;
 }
 
+function getFormatDate() {
+  // Get today's date
+  const today = new Date();
+  
+  // Get the date 7 days from today
+  const sevenDaysFromToday = new Date();
+  sevenDaysFromToday.setDate(today.getDate() + 7);
+
+  // Function to format date as YYYY-MM-DD
+  const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+  };
+
+  // Return an object with both formatted dates
+  return {
+      today: formatDate(today),
+      sevenDaysFromToday: formatDate(sevenDaysFromToday)
+  };
+}
+
 document.addEventListener("DOMContentLoaded", async function(){
-  const data = await search();
+
+
+
+// Call the function and output the results
+const dates = getFormatDate();
+console.log("Today's Date: " + dates.today);
+console.log("Date 7 Days From Today: " + dates.sevenDaysFromToday);
+
+const data = await search(dates.today,dates.sevenDaysFromToday);
   // console.log(data.response.length);
 
   let output = document.querySelector("#output");
   // output.innerHTML = ''; // Clear the output element before appending new data
 
   for (let i = 0; i < data.response.length; i++) {
-    const dateString = data.response[i].fixture.date;
-    const datePart = dateString.split("T")[0];
-    // console.log(datePart); // Output: "2024-08-25"
+    const dateTimeString = data.response[i].fixture.date;
+    console.log(dateTimeString);
+    
+    // Split the date-time string into date and time parts
+    const [datePart, timePart] = dateTimeString.split("T");
+    
+    // Remove the time zone offset from the time part
+    const timeWithoutOffset = timePart.split("+")[0];
+    
+    // console.log(datePart); // Output: "2024-08-31"
+    // console.log(timeWithoutOffset); // Output: "11:30:00"
     const row = `
       <tr>
-        <th scope="row">${datePart}</th>
+        <th scope="row">${datePart}<br>${timeWithoutOffset}</th>
         <td><img src="${data.response[i].teams.home.logo}" style="width: 100%; height: auto; max-width: 50px;">${data.response[i].teams.home.name}</td>
         <td>Vs</td>
         <td><img src="${data.response[i].teams.away.logo}" style="width: 100%; height: auto; max-width: 50px;">${data.response[i].teams.away.name}</td>
