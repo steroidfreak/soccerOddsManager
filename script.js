@@ -8,15 +8,8 @@ var requestOptions = {
   redirect: 'follow'
 };
 
-// fetch("https://v3.football.api-sports.io/leagues", requestOptions)
-//   .then(response => response.text())
-//   .then(result => console.log(result))
-//   .catch(error => console.log('error', error));
-
-// console.log(data.response[0].league.id);
-
 async function search(day0,day7) {
-  const response = await axios.get(`https://v3.football.api-sports.io/fixtures?league=39&season=2024&from=${day0}&to=${day7}`, {
+  const response = await axios.get(`https://v3.football.api-sports.io/fixtures?league=39&season=2024&from=${day0}&to=${day7}&timezone=Asia/Singapore`, {
       
       headers: {"x-apisports-key": "95782220272b5bde20c7d5b97070ec44"},
   })

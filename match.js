@@ -19,10 +19,17 @@ async function fetchData() {
     return response.data;
   }
 
+async function getOdds() {
+  const response = await axios.get(`https://v3.football.api-sports.io/odds/live?fixture=${data.fixture.id}`, {
+      
+      headers: {"x-apisports-key": "95782220272b5bde20c7d5b97070ec44"},
+  })
+  return response.data;
+}  
 async function getEPLData(){
 
   let response = await axios.get("epl.json")
-  console.log(response.data);
+  // console.log(response.data);
   return response.data;
 }
 
@@ -156,20 +163,28 @@ function calculateOutcomeProbabilities(data, homeTeam, awayTeam) {
   return { probabilities, highestProbabilityOutcome };
 }
 
+
   document.addEventListener("DOMContentLoaded", async function(){
     const output = document.querySelector("#liveMatch");
     output.innerHTML = ''; // Clear the output element before appending new data
   
     let data = await fetchData();
+    let odds = await getOdds();
+    console.log("odds.response");
+    let asianHandicap = odds.response[0];
+    console.log(asianHandicap);
     let eplData = await getEPLData();
-    for(let x of eplData){
-      if(x.Home == "Liverpool"){
-        console.log(x.Home,"vs",x.Away)
-      }
+    // for(let x of eplData){
+    //   if(x.Home == "Liverpool"){
+    //     console.log(x.Home,"vs",x.Away)
+    //   }
 
-    }
+    // }
     // let result = calculateProbability(eplData,"Liverpool","Arsenal","0","0");
     let result = calculateOutcomeProbabilities(eplData,data.response[0].teams.home.name,data.response[0].teams.away.name);
+    result.probabilities.HomeWin = Math.round(result.probabilities.HomeWin * 10) / 10;
+    result.probabilities.Draw = Math.round(result.probabilities.Draw * 10) / 10;
+    result.probabilities.AwayWin = Math.round(result.probabilities.AwayWin * 10) / 10;
     console.log(result.probabilities.HomeWin, result.probabilities.Draw,result.probabilities.AwayWin);
     const probabilities = calculateScoreProbabilities(eplData,data.response[0].teams.home.name,data.response[0].teams.away.name);
     console.log(probabilities[0].score,probabilities[0].probability);
@@ -187,6 +202,7 @@ function calculateOutcomeProbabilities(data, homeTeam, awayTeam) {
     else{
       output.innerHTML = `
       <h1>Soccer Jalan</h1>
+      <p>${odds.response[0].fixture.status.long} ${odds.response[0].fixture.status.seconds} </p>
       <h2><img src="${data.response[0].teams.home.logo}" style="width: 100%; height: auto; max-width: 50px;">${data.response[0].teams.home.name}  ${data.response[0].goals.home}  
         Vs
         <img src="${data.response[0].teams.away.logo}" style="width: 100%; height: auto; max-width: 50px;">${data.response[0].teams.away.name}  ${data.response[0].goals.away}</h2>
@@ -208,7 +224,7 @@ function calculateOutcomeProbabilities(data, homeTeam, awayTeam) {
       output.innerHTML = ''; // Clear the output element before appending new data
 
       data = await fetchData(); // Update the response variable
-      console.log(data.response[0].goals.home, "vs" ,data.response[0].goals.away);
+      // console.log(data.response[0].goals.home, "vs" ,data.response[0].goals.away);
       if(data.response[0].fixture.status.short == "NS"){
         output.innerHTML = `
         <h1>Soccer Jalan</h1>
@@ -238,5 +254,5 @@ function calculateOutcomeProbabilities(data, homeTeam, awayTeam) {
   
       }
 
-    }, 60000); // Call the function every 1 minute (60000 milliseconds)
+    }, 600000); // Call the function every 1 minute (60000 milliseconds) temp set to 60mins
   });
